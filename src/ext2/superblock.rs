@@ -152,8 +152,8 @@ impl Default for Superblock {
 	    s_first_data_block: 1,
 	    s_log_block_size: 0,
 	    s_log_frag_size: 0,
-	    s_blocks_per_group: 513,
-	    s_frags_per_group: 513,
+	    s_blocks_per_group: 512,
+	    s_frags_per_group: 512,
 	    s_inodes_per_group: 24, // If the first inode table starts at block 6
 	    			    // and we only have 8 blocks, we can only have
 	    			    // 3 blocks of inode table. At 8 inodes per block,

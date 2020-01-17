@@ -46,7 +46,7 @@ fn main() {
 	process::exit(5);
     }
     let mut sb = ext2::superblock::Superblock::new(num_sectors, num_sectors_res);
-    if num_sectors_res * SECTOR_SIZE / BLOCK_SIZE > sb.s_blocks_per_group - 1 {
+    if num_sectors_res * SECTOR_SIZE / BLOCK_SIZE >= sb.s_blocks_per_group + 1 {
 	println!("Too many reserved sectors!");
 	process::exit(16);
     }
@@ -66,7 +66,7 @@ fn main() {
     }
 
     if num_sectors_res > used_blk_id {
-	for i in used_blk_id .. (num_sectors_res * SECTOR_SIZE / BLOCK_SIZE) {
+	for i in used_blk_id .. (num_sectors_res * SECTOR_SIZE / BLOCK_SIZE) - 1 {
 	    block_bmap_reserved.set(i, true);
 	    sb.s_free_blocks_count -= 1;
 	    bgd_reserved.bg_free_blocks_count -= 1;
