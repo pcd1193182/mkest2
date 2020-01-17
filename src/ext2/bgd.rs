@@ -13,7 +13,7 @@ pub struct BGD {
     pub bg_free_blocks_count : u16,
     pub bg_free_inodes_count : u16,
     pub bg_used_dirs_count : u16,
-    idx : u32
+    pub idx : u32
 }
 const BGD_PADDING : i64 = 14;
 pub const BGD_SIZE : u32 = 32;

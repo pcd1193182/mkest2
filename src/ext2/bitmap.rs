@@ -42,6 +42,9 @@ impl Bitmap {
 		bgd.bg_free_blocks_count -= 1;
 		sb.s_free_blocks_count -= 1;
 		self.set(i, true);
+		if bgd.idx == 0 {
+		    return Some(i + 1);
+		}
 		return Some(i);
 	    }
 	}
