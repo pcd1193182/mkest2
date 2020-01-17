@@ -38,7 +38,6 @@ fn main() {
 	},
 	IOResult::Ok(f) => f
     };
-    println!("{} {} {}", num_sectors, num_sectors_res, filename);
 
     let res = file.set_len((num_sectors * SECTOR_SIZE).into());
     if !res.is_ok() {
@@ -119,13 +118,11 @@ fn main() {
 	println!("IO Error when seeking to superblock: {}", res.err().unwrap());
 	process::exit(20);
     }
-    println!("{:#?}", sb);
     let res = sb.write(&file);
     if !res.is_ok() {
 	println!("IO Error when writing superblock: {}", res.err().unwrap());
 	process::exit(6);
     }
-    println!("{:#?}", bgd_reserved);
     let res = bgd_reserved.write(&file);
     if !res.is_ok() {
 	println!("IO Error when writing reserved bgd: {}", res.err().unwrap());
@@ -144,20 +141,19 @@ fn main() {
 	println!("IO Error when seeking to reserved block bitmap: {}", res.err().unwrap());
 	process::exit(9);
     }
-    println!("bmap: {}", file.seek(std::io::SeekFrom::Current(0)).ok().unwrap());
+
     let res = block_bmap_reserved.write(&file);
     if !res.is_ok() {
 	println!("IO Error when writing reserved block bitmap: {}", res.err().unwrap());
 	process::exit(7);
     }
-    println!("bmap: {}", file.seek(std::io::SeekFrom::Current(0)).ok().unwrap());
+
     let res = inode_bmap_reserved.write(&file);
     if !res.is_ok() {
 	println!("IO Error when writing reserved inode bitmap: {}", res.err().unwrap());
 	process::exit(7);
     }
     for inode in &inodes {
-	println!("{:#?}", inode);
 	let res = inode.write(&file);
 	if !res.is_ok() {
 	    println!("IO Error when writing inode table: {}", res.err().unwrap());
@@ -174,19 +170,16 @@ fn main() {
 	let block_bmap = &block_bmaps[i as usize];
 	let inode_bmap = &inode_bmaps[i as usize];
 
-	println!("Writing backup sb {}", i);
 	let res = file.seek(std::io::SeekFrom::Start(bgd.get_start(&sb) as u64 * BLOCK_SIZE as u64));
 	if !res.is_ok() {
 	    println!("IO Error when seeking to bgd #{}: {}", i, res.err().unwrap());
 	    process::exit(9);
 	}
-	println!("at: {}", file.seek(std::io::SeekFrom::Current(0)).ok().unwrap());
 	let res = sb.write(&file);
 	if !res.is_ok() {
 	    println!("IO Error when writing superblock backup {}: {}", i, res.err().unwrap());
 	    process::exit(6);
 	}
-	println!("{:#?}", bgd_reserved);
 	let res = bgd_reserved.write(&file);
 	if !res.is_ok() {
 	    println!("IO Error when writing reserved bgd backup {}: {}", i, res.err().unwrap());
@@ -200,7 +193,7 @@ fn main() {
 		process::exit(15);
 	    }
 	}
-	println!("at: {}", file.seek(std::io::SeekFrom::Current(0)).ok().unwrap());
+
 	let res = file.seek(std::io::SeekFrom::Current((BLOCK_SIZE - (num_groups * ext2::bgd::BGD_SIZE)).try_into().unwrap()));
 	if !res.is_ok() {
 	    println!("IO Error when seeking to reserved block bitmap: {}", res.err().unwrap());
